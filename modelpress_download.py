@@ -1,35 +1,42 @@
+#coding=utf-8
 import requests
 from bs4 import BeautifulSoup
-from IPython.display import Image,display
+from IPython.display import Image, display
 from urllib.request import urlretrieve
 import os
 
-website = 'https://mdpr.jp/news/detail/2018375'
+
+website = input('è«‹è¼¸å…¥ç¶²å€: ')
 
 res = requests.get(website)
 res.encoding='utf-8'
 soup=BeautifulSoup(res.text,'html.parser')
+
+main_block = soup.find(class_='main-block')
+time = main_block.find('time').get('datetime')
+time=time[0:10]
 
 title=soup.find('title')
 title=str(title)
 title=title[7:-17]
 
 
-path='D:\\modelpress\\'+title
-os.mkdir(path)
+path='D:\\modelpress\\'+time+title
+try:
+    os.mkdir(path)
+except:
+    pass
 
-
-print(path)
 
 x=0
 for picture in soup.find_all(class_="figure"):
     websiteURL=picture.find("img").get("src")
     place = websiteURL.index('.jpg')
     websiteURL = websiteURL[0:place+4]
-    local = os.path.join('D:\\modelpress\\'+title+'\\%s.jpg' % x)  #ÀÉ®×Àx¦s¦ì¸m
+    local = os.path.join('D:\\modelpress\\'+time+title+'\\%s.jpg' % x)  #æª”æ¡ˆå„²å­˜ä½ç½®
     x+=1
     urlretrieve(websiteURL,local)
-    print('²Ä',x-1,'±i¤U¸ü§¹¦¨!')
+    print('ç¬¬',x-1,'å¼µä¸‹è¼‰å®Œæˆ!')
 
 try:
     banner_x=0
@@ -39,9 +46,9 @@ try:
             websiteURL=imgURL.get('src')
             place = websiteURL.index('.jpg')
             websiteURL = websiteURL[0:place+4]
-            local = os.path.join('D:\\modelpress\\'+title+'\\banner%s.jpg' % banner_x)  #ÀÉ®×Àx¦s¦ì¸m
+            local = os.path.join('D:\\modelpress\\'+time+title+'\\banner%s.jpg' % banner_x)  #æª”æ¡ˆå„²å­˜ä½ç½®
             banner_x+=1
             urlretrieve(websiteURL,local)
-            print('²Ä',banner_x-1,'±i¤U¸ü§¹¦¨!')
+            print('ç¬¬',banner_x-1,'å¼µä¸‹è¼‰å®Œæˆ!')
 except:
     print('No Banner!')
